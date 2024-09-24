@@ -160,4 +160,26 @@ class Iugu_Invoice extends APIResource
   
       return true;
     }
+	
+    public function sendEmail()
+    {
+          if ($this->is_new()) return false;
+  
+          try {
+              $response = self::API()->request(
+                  "POST",
+                  static::url($this) . "/send_email"
+              );
+              if (isset($response->errors)) {
+                  throw new IuguRequestException( $response->errors );
+              }
+              $new_object = self::createFromResponse($response);
+              $this->copy($new_object);
+              $this->resetStates();
+          } catch (Exception $e) {
+              return false;
+          }
+  
+      return true;
+    }
 }
