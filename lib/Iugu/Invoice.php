@@ -137,4 +137,27 @@ class Iugu_Invoice extends APIResource
 
         return true;
     }
+	
+    public function externallyPay($options=Array())
+    {
+          if ($this->is_new()) return false;
+  
+          try {
+              $response = self::API()->request(
+                  "PUT",
+                  static::url($this) . "/externally_pay",
+                  $options
+              );
+              if (isset($response->errors)) {
+                  throw new IuguRequestException( $response->errors );
+              }
+              $new_object = self::createFromResponse($response);
+              $this->copy($new_object);
+              $this->resetStates();
+          } catch (Exception $e) {
+              return false;
+          }
+  
+      return true;
+    }
 }
